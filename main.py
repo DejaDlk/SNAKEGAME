@@ -267,14 +267,14 @@ class Game:
         # jeigu gyvate susidure su savimi:
         for i in range(3, self.snake.length):
             if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
-                crash = pygame.mixer.Sound("recourses/crash.mp3")
+                crash = pygame.mixer.Sound("recourses/boom.mp3")
                 pygame.mixer.Sound.play(crash)
                 self.game_over = 0
                 raise Exception('Susidūrėte su savimi!')
 
         # jeigu gyvate atsitrenke i siena:
         if not (0 <= self.snake.x[0] <= screen_size[0] and 0 <= self.snake.y[0] <= screen_size[1]):
-            crash = pygame.mixer.Sound("recourses/crash.mp3")
+            crash = pygame.mixer.Sound("recourses/boom.mp3")
             pygame.mixer.Sound.play(crash)
             self.game_over = 1
             raise Exception("Atsitrenkėte į sieną!")
