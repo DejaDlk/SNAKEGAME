@@ -10,7 +10,6 @@ screen_size = (600, 600)
 screen_center = (screen_size[0] // 2, screen_size[1] // 2)
 
 
-
 class Apple:
     def __init__(self, screen):
         self.screen = screen
@@ -60,6 +59,7 @@ class Snake:
         self.direction = direction
 
     def walk(self):
+        # ciklas prasideda nuo paskutinio gyvatės segmento ir baigiasi pirmuoju segmentu, judėdamas atgal per visus segmentus
         for i in range(self.length - 1, 0, -1):
             self.x[i] = self.x[i - 1]
             self.y[i] = self.y[i - 1]
@@ -92,7 +92,7 @@ class Snake:
 class Game:
     def __init__(self):
         pygame.init()
-        self.surface = pygame.display.set_mode(screen_size)
+        self.screen = pygame.display.set_mode(screen_size)
         pygame.display.set_caption('Gyvatelės žaidimas')
         self.music_playing = False
 
@@ -101,10 +101,10 @@ class Game:
         self.loading_bar_height = 30
         self.font = pygame.font.SysFont('Times New Roman', 50)
 
-        self.menu = Menu(self.surface)
-        self.snake = Snake(self.surface)
-        self.apple = Apple(self.surface)
-        self.orange_obstacle = Orange(self.surface)
+        self.menu = Menu(self.screen)
+        self.snake = Snake(self.screen)
+        self.apple = Apple(self.screen)
+        self.orange_obstacle = Orange(self.screen)
         self.level = 0
         self.speed = 0.5
         self.obstacle_move_time = time.time()
@@ -132,8 +132,7 @@ class Game:
                 quit()
 
     def show_parameters_menu(self):
-        self.snake.speed = 0
-        parameters_menu = Menu(self.surface)
+        parameters_menu = Menu(self.screen)
         parameters_menu.buttons = ['Gyvatės Spalva', 'Muzika', 'Atgal']
         while True:
             for event in pygame.event.get():
@@ -157,30 +156,36 @@ class Game:
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
-                    if event.key in (pygame.K_UP, pygame.K_DOWN):
-                        selected_color_index = (selected_color_index + 1 if event.key == pygame.K_DOWN else
-                                                selected_color_index - 1) % len(self.snake.snake_images)
-                    elif event.key == pygame.K_RETURN:
+                    if event.key == pygame.K_UP:
+                        selected_color_index -= 1
+                    elif event.key == pygame.K_DOWN:
+                        selected_color_index += 1
+                    # %= priskirk ir pritaikyk likutį
+                    selected_color_index %= len(self.snake.snake_images)
+
+                    if event.key == pygame.K_RETURN:
                         self.snake.snake_color_index = selected_color_index
                         return
 
-            self.surface.fill(background)
+            self.screen.fill(background)
 
             text_font = pygame.font.SysFont('Times New Roman', 30)
+            # render - sukuria nauja screen kuriame bus tekstas
             text = text_font.render('Pasirinkite gyvatės spalvą:', True, (255, 255, 255))
             text_rect = text.get_rect(center=(screen_center[0], 100))
-            self.surface.blit(text, text_rect)
+            self.screen.blit(text, text_rect)
 
+            # i - indeksas, color_image - elementas
             for i, color_image in enumerate(self.snake.snake_images):
                 image_rect = color_image.get_rect(center=(screen_center[0], 200 + i * 100))
-                self.surface.blit(color_image, image_rect)
+                self.screen.blit(color_image, image_rect)
                 if i == selected_color_index:
-                    pygame.draw.rect(self.surface, (255, 255, 255), image_rect, 3)
+                    pygame.draw.rect(self.screen, (255, 255, 255), image_rect, 3)
 
             pygame.display.update()
 
     def sound_options(self):
-        sound_menu = Menu(self.surface)
+        sound_menu = Menu(self.screen)
         sound_menu.buttons = ['Įjungti', 'Išjungti']
         while True:
             for event in pygame.event.get():
@@ -202,13 +207,13 @@ class Game:
             pygame.display.update()
 
     def draw_loading_screen(self):
-        self.surface.fill(background)
-        pygame.draw.rect(self.surface, (255, 255, 255), (100, 350, self.loading_bar_width, self.loading_bar_height))
-        pygame.draw.rect(self.surface, (192, 192, 192),
+        self.screen.fill(background)
+        pygame.draw.rect(self.screen, (255, 255, 255), (100, 350, self.loading_bar_width, self.loading_bar_height))
+        pygame.draw.rect(self.screen, (192, 192, 192),
                          (100, 350, int(self.loading_bar_width * self.loading_progress), self.loading_bar_height))
         text = self.font.render('Kraunasi....', True, (255, 255, 255))
         text_rect = text.get_rect(center=screen_center)
-        self.surface.blit(text, text_rect)
+        self.screen.blit(text, text_rect)
         pygame.display.flip()
 
     def loading_process(self):
@@ -222,9 +227,9 @@ class Game:
         self.speed = 0.5
         self.obstacle_count = 0
         self.snake.length = 0
-        self.snake = Snake(self.surface)
-        self.apple = Apple(self.surface)
-        self.orange_obstacle = Orange(self.surface)
+        self.snake = Snake(self.screen)
+        self.apple = Apple(self.screen)
+        self.orange_obstacle = Orange(self.screen)
 
     def update_speed(self):
         self.speed += 1
@@ -282,15 +287,15 @@ class Game:
     def display_level(self):
         font = pygame.font.SysFont('Times New Roman', 30)
         level_text = font.render(f'Lygis: {self.level}', True, (200, 200, 200))
-        self.surface.blit(level_text, (430, 50))
+        self.screen.blit(level_text, (430, 50))
 
     def display_score(self):
         font = pygame.font.SysFont('Times New Roman', 30)
         score = font.render(f'Taškai: {self.snake.length - 1}', True, (200, 200, 200))
-        self.surface.blit(score, (430, 10))
+        self.screen.blit(score, (430, 10))
 
     def show_game_over(self):
-        self.surface.fill(background)
+        self.screen.fill(background)
 
         if self.game_over == 0:
             tekstas = 'Susidūrėte su savimi!'
@@ -299,23 +304,23 @@ class Game:
 
         font = pygame.font.SysFont('Times New Roman', 30)
         line1 = font.render(f'PRALAIMĖJOTE! {tekstas}', True, (255, 255, 255))
-        self.surface.blit(line1, (50, 200))
+        self.screen.blit(line1, (50, 200))
 
         line3 = font.render(f'Jūsų taškai: {self.snake.length - 1}, Lygis: {self.level}', True, (255, 255, 255))
-        self.surface.blit(line3, (50, 250))
+        self.screen.blit(line3, (50, 250))
 
         apple_image = pygame.image.load('recourses/apple.png')
-        self.surface.blit(apple_image, (50, 300))
+        self.screen.blit(apple_image, (50, 300))
         apple_count_text = font.render(f'Jūs suvalgėte {self.snake.length - 1} obuolius', True, (255, 255, 255))
-        self.surface.blit(apple_count_text, (100, 300))
+        self.screen.blit(apple_count_text, (100, 300))
 
         orange_image = pygame.image.load('recourses/orange.png')
-        self.surface.blit(orange_image, (50, 350))
+        self.screen.blit(orange_image, (50, 350))
         orange_count_text = font.render(f'Jūs pagavote {self.obstacle_count} kliūtis', True, (255, 255, 255))
-        self.surface.blit(orange_count_text, (100, 350))
+        self.screen.blit(orange_count_text, (100, 350))
 
         line2 = font.render(f'Norint žaisti dar kartą, paspauskite ENTER', True, (255, 255, 255))
-        self.surface.blit(line2, (50, 400))
+        self.screen.blit(line2, (50, 400))
         pygame.display.flip()
 
     def play_background_music(self):
@@ -347,11 +352,10 @@ class Game:
 
                 elif event.type == QUIT:
                     running = False
-
+            # try blokas yra butinas, nes net jei bus klaida, zaidimas gali buti paleistas is naujo, o ne sustos ir pasibaigs
             try:
                 if not pause:
                     self.play()
-
             except Exception as e:
                 print(e)
                 self.show_game_over()
