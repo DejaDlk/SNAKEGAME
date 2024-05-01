@@ -59,7 +59,6 @@ class Snake:
         self.direction = direction
 
     def walk(self):
-        # ciklas prasideda nuo paskutinio gyvatės segmento ir baigiasi pirmuoju segmentu, judėdamas atgal per visus segmentus
         for i in range(self.length - 1, 0, -1):
             self.x[i] = self.x[i - 1]
             self.y[i] = self.y[i - 1]
@@ -170,12 +169,10 @@ class Game:
             self.screen.fill(background)
 
             text_font = pygame.font.SysFont('Times New Roman', 30)
-            # render - sukuria nauja screen kuriame bus tekstas
             text = text_font.render('Pasirinkite gyvatės spalvą:', True, (255, 255, 255))
             text_rect = text.get_rect(center=(screen_center[0], 100))
             self.screen.blit(text, text_rect)
 
-            # i - indeksas, color_image - elementas
             for i, color_image in enumerate(self.snake.snake_images):
                 image_rect = color_image.get_rect(center=(screen_center[0], 200 + i * 100))
                 self.screen.blit(color_image, image_rect)
@@ -352,7 +349,7 @@ class Game:
 
                 elif event.type == QUIT:
                     running = False
-            # try blokas yra butinas, nes net jei bus klaida, zaidimas gali buti paleistas is naujo, o ne sustos ir pasibaigs
+            
             try:
                 if not pause:
                     self.play()
