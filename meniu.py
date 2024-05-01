@@ -14,7 +14,7 @@ class Menu:
         text_rect = text.get_rect(center=(self.screen.get_width() // 2, 150))
         self.screen.blit(text, text_rect)
 
-        # i - indeksas, button_text - elementas
+       
         for i, button_text in enumerate(self.buttons):
             color = (255, 255, 255) if i == self.selected_button else (150, 150, 150)
             text_surface = self.font.render(button_text, True, color)
