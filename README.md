@@ -10,7 +10,7 @@ Tačiau jis turi būti atsargus, kad nesusidurtų su siena arba su savimi. Žaid
 # Kaip pasileisti programą:
 
 Įsitikinkite, kad turite įdiegtą Python 3.7 ar naujesnę versiją.
-Įdiekite Pygame biblioteką:
+Įdiekite Pygame biblioteką: 
 
 ````
 pip install pygame
