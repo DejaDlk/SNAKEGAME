@@ -15,7 +15,7 @@ class Apple:
         self.screen = screen
         self.image = pygame.image.load('recourses/apple.png').convert_alpha()
         self.x = default * 1
-        self.y = default * 2.5
+        self.y = default * 2
 
     def draw(self):
         self.screen.blit(self.image, (self.x, self.y))
